@@ -31,7 +31,7 @@ python -m petitcoding serve --config configs/sglang.toml
 2. 将输出的 JSON 属性合并到 VS Code 的 `settings.json` 中；保留已有设置，不要覆盖整个文件。设置 `"claudeCode.disableLoginPrompt": true`，重新加载窗口并开启新会话。
 3. VS Code 与服务不在同一台机器时，通过 SSH 隧道把服务端口转发到运行扩展的机器；Remote SSH 模式需确认扩展进程实际运行的位置。确保生成配置中的地址对扩展进程可达。
 
-这里使用 SGLang 原生 `/v1/messages`，无需自行实现协议转换。Anthropic 不支持经网关使用非 Claude 模型，此集成的完整工作流仍需在实际扩展中验证；插件更新可能影响兼容性。环境变量详细说明参见 [SGLang 文档](https://docs.sglang.io/docs/basic_usage/anthropic_api) 和 [VS Code 扩展文档](https://code.claude.com/docs/en/vs-code)。示例 token 是本机无鉴权服务的占位值，不是密码。
+这里使用所选后端的原生 `/v1/messages`，无需自行实现协议转换；vLLM 接入仍需按所用版本验证。Anthropic 不支持经网关使用非 Claude 模型，此集成的完整工作流仍需在实际扩展中验证；插件更新可能影响兼容性。环境变量详细说明参见 [SGLang 文档](https://docs.sglang.io/docs/basic_usage/anthropic_api) 和 [VS Code 扩展文档](https://code.claude.com/docs/en/vs-code)。示例 token 是本机无鉴权服务的占位值，不是密码。
 
 运行 `python -m petitcoding client opencode` 可生成 OpenCode JSON 配置；`client codex` 输出实验性的 Responses 配置，需自行确认所用后端和客户端版本的 Responses 兼容性。Claude 和 Codex 集成不因模型 API 可访问而自动视为工作流已验证。
 

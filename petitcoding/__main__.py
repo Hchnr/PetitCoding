@@ -31,9 +31,7 @@ def main():
             root = f"http://{s['host']}:{s['port']}"
             model = s['model_name']
             if args.frontend == 'claude':
-                if s['backend'] != 'sglang':
-                    raise ValueError('Claude integration currently requires SGLang Anthropic API')
-                model += '[1m]' if s['context_length'] > 262144 else ''
+                model += '[1m]' if s['backend'] == 'sglang' and s['context_length'] > 262144 else ''
                 values = {'ANTHROPIC_BASE_URL': root, 'ANTHROPIC_AUTH_TOKEN': 'dummy',
                           'ANTHROPIC_DEFAULT_HAIKU_MODEL': model, 'ANTHROPIC_DEFAULT_SONNET_MODEL': model,
                           'ANTHROPIC_DEFAULT_OPUS_MODEL': model, 'CLAUDE_CODE_ATTRIBUTION_HEADER': '0',
