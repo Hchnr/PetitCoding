@@ -13,7 +13,7 @@ def main():
         p = sub.add_parser(name)
         p.add_argument('--config', default='configs/sglang.toml')
         if name == 'client':
-            p.add_argument('frontend', choices=['claude', 'opencode', 'codex'])
+            p.add_argument('frontend', choices=['claude', 'opencode', 'codex', 'qwen'])
     sub.add_parser('benchmark', help='see python -m petitcoding.benchmark --help')
     args = parser.parse_args()
     if args.action == 'benchmark':
@@ -45,6 +45,14 @@ def main():
                     'npm': '@ai-sdk/openai-compatible', 'name': 'PetitCoding', 'options': {'baseURL': root+'/v1'},
                     'models': {model: {'name': model, 'limit': {'context': s['context_length'], 'output': 16384}}}}},
                     'model': 'petitcoding/'+model}, indent=2))
+            elif args.frontend == 'qwen':
+                print(json.dumps({'env': {'PETITCODING_API_KEY': 'dummy'},
+                    'modelProviders': {'openai': [{'id': model, 'name': 'PetitCoding local',
+                        'envKey': 'PETITCODING_API_KEY', 'baseUrl': root+'/v1',
+                        'generationConfig': {'contextWindowSize': s['context_length'],
+                                             'timeout': 300000}}]},
+                    'security': {'auth': {'selectedType': 'openai'}},
+                    'model': {'name': model}}, indent=2))
             else:
                 print('# Experimental: verify your Codex version supports a custom Responses endpoint')
                 print('model = "'+model+'"\nmodel_provider = "petitcoding"\n\n[model_providers.petitcoding]')

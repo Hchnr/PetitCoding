@@ -35,7 +35,11 @@ python -m petitcoding serve --config configs/sglang.toml
 
 这里使用所选后端的原生 `/v1/messages`，无需自行实现协议转换；vLLM 接入仍需按所用版本验证。Anthropic 不支持经网关使用非 Claude 模型，此集成的完整工作流仍需在实际扩展中验证；插件更新可能影响兼容性。环境变量详细说明参见 [SGLang 文档](https://docs.sglang.io/docs/basic_usage/anthropic_api) 和 [VS Code 扩展文档](https://code.claude.com/docs/en/vs-code)。示例 token 是本机无鉴权服务的占位值，不是密码。
 
-运行 `python -m petitcoding client opencode` 可生成 OpenCode JSON 配置；`client codex` 输出实验性的 Responses 配置，需自行确认所用后端和客户端版本的 Responses 兼容性。Claude 和 Codex 集成不因模型 API 可访问而自动视为工作流已验证。
+运行 `python -m petitcoding client opencode` 可生成 OpenCode JSON 配置；`client codex` 输出实验性的 Responses 配置，需自行确认所用后端和客户端版本的 Responses 兼容性。
+
+### Qwen Code
+
+安装官方 [Qwen Code Companion](https://marketplace.visualstudio.com/items?itemName=qwenlm.qwen-code-vscode-ide-companion) 扩展。运行 `python -m petitcoding client qwen --config configs/sglang.toml`，将输出合并至用户目录 `~/.qwen/settings.json`，保留其他已有设置。配置选择本地 OpenAI 兼容接口及配置文件中的上下文长度；`dummy` 是本地未启用鉴权时的占位值。如已配置其他 OpenAI 模型，将 `modelProviders.openai` 数组合并而非覆盖。启动后端，然后在 VS Code 命令面板运行 `Qwen Code: Open`。不同配置文件须对应实际运行的服务和上下文长度。[官方配置说明](https://qwenlm.github.io/qwen-code-docs/en/users/configuration/model-providers/)。
 
 ## 并发 benchmark
 
