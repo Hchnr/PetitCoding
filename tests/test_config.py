@@ -1,4 +1,7 @@
 import tempfile
+import json
+import subprocess
+import sys
 import unittest
 from pathlib import Path
 from petitcoding.config import command, load
@@ -22,6 +25,16 @@ class ConfigTest(unittest.TestCase):
         self.assertIn('--json-model-override-args', cmd)
         self.assertEqual(env['SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN'], '1')
         self.assertIn('"factor": 4.0', cmd[-1])
+
+    def test_claude_profiles_declare_model_window_and_effort(self):
+        for path, model, window in [('configs/sglang.toml', 'petit-qwen', '262144'),
+                                    ('configs/sglang-1m.toml', 'petit-qwen[1m]', '1000000')]:
+            result = subprocess.check_output([sys.executable, '-m', 'petitcoding', 'client',
+                                              '--config', path, 'claude'], text=True)
+            values = {item['name']: item['value'] for item in json.loads(result)['claudeCode.environmentVariables']}
+            self.assertEqual(values['ANTHROPIC_MODEL'], model)
+            self.assertEqual(values['CLAUDE_CODE_MAX_CONTEXT_TOKENS'], window)
+            self.assertEqual(values['CLAUDE_CODE_EFFORT_LEVEL'], 'medium')
 
     def test_reject_unknown_options(self):
         source = Path('configs/sglang.toml').read_text() + '\nquantization = "fp8"\n'

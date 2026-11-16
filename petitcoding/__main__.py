@@ -31,12 +31,14 @@ def main():
             root = f"http://{s['host']}:{s['port']}"
             model = s['model_name']
             if args.frontend == 'claude':
-                model += '[1m]' if s['backend'] == 'sglang' and s['context_length'] > 262144 else ''
-                values = {'ANTHROPIC_BASE_URL': root, 'ANTHROPIC_AUTH_TOKEN': 'dummy',
+                model += '[1m]' if s['backend'] == 'sglang' and s['context_length'] == 1000000 else ''
+                values = {'ANTHROPIC_BASE_URL': root, 'ANTHROPIC_AUTH_TOKEN': 'dummy', 'ANTHROPIC_MODEL': model,
                           'ANTHROPIC_DEFAULT_HAIKU_MODEL': model, 'ANTHROPIC_DEFAULT_SONNET_MODEL': model,
                           'ANTHROPIC_DEFAULT_OPUS_MODEL': model, 'CLAUDE_CODE_ATTRIBUTION_HEADER': '0',
                           'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC': '1', 'API_TIMEOUT_MS': '3000000',
-                          'CLAUDE_CODE_AUTO_COMPACT_WINDOW': str(s['context_length'])}
+                          'CLAUDE_CODE_AUTO_COMPACT_WINDOW': str(s['context_length']),
+                          'CLAUDE_CODE_MAX_CONTEXT_TOKENS': str(s['context_length']),
+                          'CLAUDE_CODE_EFFORT_LEVEL': 'medium'}
                 print(json.dumps({'claudeCode.disableLoginPrompt': True, 'claudeCode.environmentVariables': [{'name': k, 'value': v} for k, v in values.items()]}, indent=2))
             elif args.frontend == 'opencode':
                 print(json.dumps({'$schema': 'https://opencode.ai/config.json', 'provider': {'petitcoding': {

@@ -28,8 +28,10 @@ python -m petitcoding serve --config configs/sglang.toml
 ## VS Code Claude Code
 
 1. 安装官方 Claude Code 扩展。运行 `python -m petitcoding client claude --config configs/sglang.toml`。
-2. 将输出的 JSON 属性合并到 VS Code 的 `settings.json` 中；保留已有设置，不要覆盖整个文件。设置 `"claudeCode.disableLoginPrompt": true`，重新加载窗口并开启新会话。
+2. 将输出的 JSON 属性合并到 VS Code 的用户或远程机器 `settings.json` 中；`claudeCode.environmentVariables` 是机器级设置，工作区设置不会生效。保留已有设置，不要覆盖整个文件。设置 `"claudeCode.disableLoginPrompt": true`，重新加载窗口并开启新会话。
 3. VS Code 与服务不在同一台机器时，通过 SSH 隧道把服务端口转发到运行扩展的机器；Remote SSH 模式需确认扩展进程实际运行的位置。确保生成配置中的地址对扩展进程可达。
+
+生成配置显式指定模型、实际窗口和 `medium` 推理强度；Qwen3.8 不接受 Claude Code 可能发送的 `high` 强度。
 
 这里使用所选后端的原生 `/v1/messages`，无需自行实现协议转换；vLLM 接入仍需按所用版本验证。Anthropic 不支持经网关使用非 Claude 模型，此集成的完整工作流仍需在实际扩展中验证；插件更新可能影响兼容性。环境变量详细说明参见 [SGLang 文档](https://docs.sglang.io/docs/basic_usage/anthropic_api) 和 [VS Code 扩展文档](https://code.claude.com/docs/en/vs-code)。示例 token 是本机无鉴权服务的占位值，不是密码。
 
