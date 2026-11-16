@@ -52,3 +52,5 @@ python -m unittest discover -s tests -v
 ```
 
 项目计划与验收范围见 [计划文档](docs/plans/v0.0.1.md)。
+
+本机测试记录与当前未验证项见 [2026-11-16 冒烟报告](docs/reports/2026-11-16-smoke.md)。
