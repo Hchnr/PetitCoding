@@ -5,6 +5,7 @@ import json
 import math
 import time
 import urllib.request
+import uuid
 from pathlib import Path
 
 
@@ -66,6 +67,7 @@ def run(args):
         raise ValueError('requests must be at least the largest concurrency')
     if args.warmup < 0:
         raise ValueError('warmup cannot be negative')
+    cold = getattr(args, 'cold_cache', False)
     Path(args.output).mkdir(parents=True, exist_ok=True)
     output = Path(args.output)
     if args.warmup:
@@ -79,7 +81,9 @@ def run(args):
             start = time.perf_counter()
             rows = []
             with concurrent.futures.ThreadPoolExecutor(max_workers=c) as executor:
-                futures = [executor.submit(request, args.url, args.model, prompt, args.output_tokens, args.timeout)
+                def rp():
+                    return prompt if not cold else 'cold-cache:'+uuid.uuid4().hex+':\n'+prompt
+                futures = [executor.submit(request, args.url, args.model, rp(), args.output_tokens, args.timeout)
                            for _ in range(args.requests)]
                 for future in concurrent.futures.as_completed(futures):
                     row = future.result()
@@ -91,12 +95,24 @@ def run(args):
             ok = [r for r in rows if r['ok']]
             ttfts = [r['ttft_s'] for r in ok]
             latencies = [r['latency_s'] for r in ok]
+            intervals = []
+            tpots = []
+            for r in ok:
+                cs = r['output_chunks_s']
+                intervals.extend(cs[i+1]-cs[i] for i in range(len(cs)-1))
+                count = r['usage'].get('completion_tokens')
+                if isinstance(count, int) and count > 1 and len(cs) > 1:
+                    tpots.append((cs[-1]-cs[0])/(count-1))
             tokens = sum(r['usage'].get('completion_tokens', 0) for r in ok)
             has_usage = bool(ok) and all('completion_tokens' in r['usage'] for r in ok)
+            has_input_usage = bool(ok) and all('prompt_tokens' in r['usage'] for r in ok)
             item = {'concurrency': c, 'requests': len(rows), 'successes': len(ok), 'elapsed_s': elapsed,
                     'requests_per_s': len(ok)/elapsed, 'output_tokens_per_s': tokens/elapsed if has_usage else None,
+                    'input_tokens': sum(r['usage']['prompt_tokens'] for r in ok) if has_input_usage else None,
                     'ttft_p50_s': percentile(ttfts, .5), 'ttft_p95_s': percentile(ttfts, .95),
-                    'latency_p50_s': percentile(latencies, .5), 'latency_p95_s': percentile(latencies, .95)}
+                    'latency_p50_s': percentile(latencies, .5), 'latency_p95_s': percentile(latencies, .95),
+                    'chunk_interval_p50_s': percentile(intervals, .5), 'chunk_interval_p95_s': percentile(intervals, .95),
+                    'tpot_s': sum(tpots)/len(tpots) if tpots else None}
             summary.append(item)
             print(json.dumps(item), flush=True)
     (output/'summary.json').write_text(json.dumps({'settings': vars(args), 'results': summary}, indent=2)+'\n')
@@ -114,6 +130,7 @@ def main():
     p.add_argument('--output-tokens', type=int, default=256)
     p.add_argument('--timeout', type=float, default=3600)
     p.add_argument('--warmup', type=int, default=1)
+    p.add_argument('--cold-cache', action='store_true', help='give each request a unique prompt to defeat prefix caching')
     p.add_argument('--output', default='benchmark-results')
     args = p.parse_args()
     try:
