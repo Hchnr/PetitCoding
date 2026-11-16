@@ -38,7 +38,8 @@ def main():
                           'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC': '1', 'API_TIMEOUT_MS': '3000000',
                           'CLAUDE_CODE_AUTO_COMPACT_WINDOW': str(s['context_length']),
                           'CLAUDE_CODE_MAX_CONTEXT_TOKENS': str(s['context_length']),
-                          'CLAUDE_CODE_EFFORT_LEVEL': 'medium'}
+                          'CLAUDE_CODE_EFFORT_LEVEL': 'medium',
+                          'CLAUDE_CODE_AUTO_MODE_SERVER': '0', 'CLAUDE_CODE_AUTO_MODE_MODEL': model}
                 print(json.dumps({'claudeCode.disableLoginPrompt': True, 'claudeCode.environmentVariables': [{'name': k, 'value': v} for k, v in values.items()]}, indent=2))
             elif args.frontend == 'opencode':
                 print(json.dumps({'$schema': 'https://opencode.ai/config.json', 'provider': {'petitcoding': {

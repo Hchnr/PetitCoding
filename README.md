@@ -33,6 +33,8 @@ python -m petitcoding serve --config configs/sglang.toml
 
 生成配置显式指定模型、实际窗口和 `medium` 推理强度；Qwen3.8 不接受 Claude Code 可能发送的 `high` 强度。
 
+生成配置还将 `CLAUDE_CODE_AUTO_MODE_SERVER` 设为 `0`，并将 `CLAUDE_CODE_AUTO_MODE_MODEL` 指向本地模型，使 auto mode 使用客户端分类请求；本地 SGLang 不提供 Claude 的服务端分类结果。已在隔离目录验证一次普通命令能通过本地分类后执行。Qwen 不在 Anthropic 官方支持的分类模型列表中，分类准确性和防护效果未经充分验证，不能视为等同官方 auto mode；敏感任务请使用手动审批或其他隔离机制。具体行为可能随 Claude Code 和模型版本变化，参见 [权限模式说明](https://code.claude.com/docs/en/permission-modes)。
+
 这里使用所选后端的原生 `/v1/messages`，无需自行实现协议转换；vLLM 接入仍需按所用版本验证。Anthropic 不支持经网关使用非 Claude 模型，此集成的完整工作流仍需在实际扩展中验证；插件更新可能影响兼容性。环境变量详细说明参见 [SGLang 文档](https://docs.sglang.io/docs/basic_usage/anthropic_api) 和 [VS Code 扩展文档](https://code.claude.com/docs/en/vs-code)。示例 token 是本机无鉴权服务的占位值，不是密码。
 
 运行 `python -m petitcoding client opencode` 可生成 OpenCode JSON 配置；`client codex` 输出实验性的 Responses 配置，需自行确认所用后端和客户端版本的 Responses 兼容性。
