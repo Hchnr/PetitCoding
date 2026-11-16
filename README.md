@@ -47,9 +47,11 @@ python -m petitcoding serve --config configs/sglang.toml
 python -m petitcoding.benchmark --concurrency 1 2 4 8 --requests 16 --output-tokens 256 --output benchmark-results
 # 自定义同一输入文本（不同请求可共享前缀缓存）：
 python -m petitcoding.benchmark --prompt-file prompt.txt --requests 16 --concurrency 1 2 4
+# 冷缓存（每个请求唯一 prompt，绕开前缀缓存）：
+python -m petitcoding.benchmark --prompt-file prompt.txt --requests 16 --concurrency 1 2 4 --cold-cache
 ```
 
-输出逐请求 `requests.jsonl` 和 `summary.json`，包含流式首 token 时间（首个非空输出事件）、完整延迟、请求吞吐及服务端返回 usage 时的输出 token 吞吐。各档固定请求数，闭环发压；延迟从线程开始发出请求计时，不包括客户端线程池内等待，失败也记录且返回非零状态；`--warmup 0` 禁用预热。数据是同一 prompt 的热缓存场景；如需冷缓存、准确 token 长度、GPU 指标、TPOT、开环和真实 coding 工作流评估，需额外工具，不能直接从当前结果推断。为防止覆盖，以不同 `--output` 目录保存每次运行。长上下文请求可能非常耗时，输入需预留输出空间。
+输出逐请求 `requests.jsonl` 和 `summary.json`，包含首个非空输出事件时间、完整延迟、请求吞吐、服务端返回 usage 时的 token 吞吐和输入 token 数、流式输出事件间隔 p50/p95，以及根据首末输出事件时间和服务端输出 token 数估算的平均 TPOT。一个流式事件可能包含多个 token，事件间隔不能直接当作 token 间隔。各档固定请求数，闭环发压；延迟从线程开始发出请求计时，不包括客户端线程池内等待，失败也记录且返回非零状态；`--warmup 0` 禁用预热，`--cold-cache` 让每个请求使用唯一 prompt 以绕开前缀缓存。默认数据是同一 prompt 的热缓存场景；准确 token 长度、GPU 指标、开环到达率压测和真实 coding 工作流评估仍不能直接从当前结果推断，需额外工具。为防止覆盖，以不同 `--output` 目录保存每次运行。长上下文请求可能非常耗时，输入需预留输出空间。
 
 ## 验证
 
