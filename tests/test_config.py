@@ -35,6 +35,8 @@ class ConfigTest(unittest.TestCase):
             self.assertEqual(values['ANTHROPIC_MODEL'], model)
             self.assertEqual(values['CLAUDE_CODE_MAX_CONTEXT_TOKENS'], window)
             self.assertEqual(values['CLAUDE_CODE_EFFORT_LEVEL'], 'medium')
+            self.assertEqual(values['CLAUDE_CODE_AUTO_MODE_SERVER'], '0')
+            self.assertEqual(values['CLAUDE_CODE_AUTO_MODE_MODEL'], model)
 
     def test_qwen_client_provider(self):
         for path, window in [('configs/sglang.toml', 262144), ('configs/sglang-1m.toml', 1000000)]:
