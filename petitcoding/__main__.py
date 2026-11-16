@@ -22,7 +22,9 @@ def main():
         s = load(args.config)
         cmd, env = command(s)
         if args.action == 'show':
-            print('CUDA_VISIBLE_DEVICES=' + shlex.quote(env['CUDA_VISIBLE_DEVICES']), shlex.join(cmd))
+            names = ['CUDA_VISIBLE_DEVICES', 'SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN', 'VLLM_ALLOW_LONG_MAX_MODEL_LEN']
+            prefix = ' '.join(f'{name}={shlex.quote(env[name])}' for name in names if name in env and (name == 'CUDA_VISIBLE_DEVICES' or env[name] != os.environ.get(name)))
+            print(prefix, shlex.join(cmd))
         elif args.action == 'serve':
             os.execvpe(cmd[0], cmd, env)
         else:
