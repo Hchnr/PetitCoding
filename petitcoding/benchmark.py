@@ -36,7 +36,7 @@ def request(url, model, prompt, output, timeout):
                     usage = event['usage']
                 for choice in event.get('choices', []):
                     delta = choice.get('delta') or {}
-                    if delta.get('content') or delta.get('reasoning_content') or delta.get('tool_calls'):
+                    if delta.get('content') or delta.get('reasoning_content') or delta.get('reasoning') or delta.get('tool_calls'):
                         now = time.perf_counter()
                         if first is None:
                             first = now
