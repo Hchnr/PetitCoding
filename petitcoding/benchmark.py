@@ -3,7 +3,6 @@ import argparse
 import concurrent.futures
 import json
 import math
-import statistics
 import time
 import urllib.request
 from pathlib import Path
@@ -63,6 +62,10 @@ def run(args):
         raise ValueError('prompt must not be empty')
     if args.requests < 1 or args.output_tokens < 1 or args.timeout <= 0 or any(c < 1 for c in args.concurrency):
         raise ValueError('requests, output tokens, timeout and concurrency must be positive')
+    if args.requests < max(args.concurrency):
+        raise ValueError('requests must be at least the largest concurrency')
+    if args.warmup < 0:
+        raise ValueError('warmup cannot be negative')
     Path(args.output).mkdir(parents=True, exist_ok=True)
     output = Path(args.output)
     if args.warmup:
