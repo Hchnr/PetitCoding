@@ -43,7 +43,7 @@ python -m petitcoding.benchmark --concurrency 1 2 4 8 --requests 16 --output-tok
 python -m petitcoding.benchmark --prompt-file prompt.txt --requests 16 --concurrency 1 2 4
 ```
 
-输出逐请求 `requests.jsonl` 和 `summary.json`，包含流式首 token 时间（首个非空输出事件）、完整延迟、请求吞吐及服务端返回 usage 时的输出 token 吞吐。各档固定请求数，闭环发压，失败也记录且返回非零状态；`--warmup 0` 禁用预热。数据是同一 prompt 的热缓存场景；如需冷缓存、准确 token 长度、GPU 指标、TPOT、开环和真实 coding 工作流评估，需额外工具，不能直接从当前结果推断。为防止覆盖，以不同 `--output` 目录保存每次运行。长上下文请求可能非常耗时，输入需预留输出空间。
+输出逐请求 `requests.jsonl` 和 `summary.json`，包含流式首 token 时间（首个非空输出事件）、完整延迟、请求吞吐及服务端返回 usage 时的输出 token 吞吐。各档固定请求数，闭环发压；延迟从线程开始发出请求计时，不包括客户端线程池内等待，失败也记录且返回非零状态；`--warmup 0` 禁用预热。数据是同一 prompt 的热缓存场景；如需冷缓存、准确 token 长度、GPU 指标、TPOT、开环和真实 coding 工作流评估，需额外工具，不能直接从当前结果推断。为防止覆盖，以不同 `--output` 目录保存每次运行。长上下文请求可能非常耗时，输入需预留输出空间。
 
 ## 验证
 
