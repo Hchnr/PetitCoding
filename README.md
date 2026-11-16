@@ -23,7 +23,7 @@ python -m petitcoding serve --config configs/sglang.toml
 
 `serve` 前台运行，Ctrl-C 停止；选 vLLM 使用 `configs/vllm.toml`。编辑 TOML 中的模型目录、GPU、上下文和端口。`show` 只打印启动命令；扩展上下文所需环境变量在 `serve` 内自动设置。后端默认仅监听 localhost，启动完成后可访问 `http://127.0.0.1:30000/v1/models`。若端口或模型目录不匹配，请先调整配置。使用过程中勿将服务暴露到公网；默认没有认证。
 
-上下文默认 262144（输入与输出合计）；可以将 `context_length` 改为 524288 或 1000000，自动注入模型说明书提供的静态 YaRN 配置。扩展上下文的实际容量和质量依赖硬件与引擎版本，静态 YaRN 也可能影响短文本质量。显存不足时请降低并发或上下文，工具不会自动使用低精度。
+上下文默认 262144（输入与输出合计）；可使用 `configs/sglang-1m.toml`，或将 `context_length` 改为 524288 或 1000000，自动注入模型说明书提供的静态 YaRN 配置。扩展上下文的实际容量和质量依赖硬件与引擎版本，静态 YaRN 也可能影响短文本质量。显存不足时请降低并发或上下文，工具不会自动使用低精度。
 
 ## VS Code Claude Code
 
