@@ -1,0 +1,10 @@
+[server]
+backend = "vllm"
+model_path = "/share-mixed/project/eai_pwm/models/Qwen3.8-27B"
+model_name = "petit-qwen"
+host = "127.0.0.1"
+port = 8000
+gpu_ids = [0, 1, 2, 3]
+context_length = 262144
+max_running_requests = 4
+memory_fraction = 0.85
