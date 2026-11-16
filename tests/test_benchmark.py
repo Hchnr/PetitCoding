@@ -14,7 +14,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-Type', 'text/event-stream')
         self.end_headers()
-        for event in ({'choices': [{'delta': {'content': 'hello'}}]}, {'choices': [], 'usage': {'completion_tokens': 1}}):
+        for event in ({'choices': [{'delta': {'reasoning': 'thinking'}}]}, {'choices': [], 'usage': {'completion_tokens': 1}}):
             self.wfile.write(b'data: '+json.dumps(event).encode()+b'\n\n')
         self.wfile.write(b'data: [DONE]\n\n')
 
