@@ -10,8 +10,8 @@
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install --pre sglang 'transformers>=5.8.0'
-# 或另建环境安装 vllm 和 transformers
+pip install 'sglang==0.5.23' 'transformers==5.19.0' 'torch==2.14.1'
+# 或另建环境安装 vllm==0.33.0（见 vLLM 官方安装指南）
 ```
 
 ## 启动
