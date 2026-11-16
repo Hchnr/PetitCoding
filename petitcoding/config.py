@@ -52,7 +52,7 @@ def command(s):
                '--tp-size', str(len(s['gpu_ids'])), '--dtype', 'bfloat16', '--kv-cache-dtype', 'bf16',
                '--context-length', str(s['context_length']), '--max-running-requests', str(s['max_running_requests']),
                '--mem-fraction-static', str(s['memory_fraction']), '--reasoning-parser', 'qwen3',
-               '--tool-call-parser', 'qwen3_coder']
+               '--tool-call-parser', 'qwen3_coder', '--mamba-ssm-dtype', 'float32']
         if yarn:
             env['SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN'] = '1'
             cmd += ['--json-model-override-args', json.dumps(yarn)]

@@ -12,6 +12,8 @@ class ConfigTest(unittest.TestCase):
             self.assertIn('bf16' if name == 'sglang' else 'bfloat16', cmd)
             self.assertEqual(env['CUDA_VISIBLE_DEVICES'], '0,1,2,3')
             self.assertNotIn('--quantization', cmd)
+            if name == 'sglang':
+                self.assertEqual(cmd[cmd.index('--mamba-ssm-dtype')+1], 'float32')
 
     def test_extended_context(self):
         s = load('configs/sglang.toml')
