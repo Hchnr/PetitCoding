@@ -36,6 +36,18 @@ class ConfigTest(unittest.TestCase):
             self.assertEqual(values['CLAUDE_CODE_MAX_CONTEXT_TOKENS'], window)
             self.assertEqual(values['CLAUDE_CODE_EFFORT_LEVEL'], 'medium')
 
+    def test_qwen_client_provider(self):
+        for path, window in [('configs/sglang.toml', 262144), ('configs/sglang-1m.toml', 1000000)]:
+            result = subprocess.check_output([sys.executable, '-m', 'petitcoding', 'client', '--config', path, 'qwen'], text=True)
+            cfg = json.loads(result)
+            provider = cfg['modelProviders']['openai'][0]
+            self.assertEqual(provider['id'], 'petit-qwen')
+            self.assertTrue(provider['baseUrl'].endswith('/v1'))
+            self.assertEqual(provider['generationConfig']['contextWindowSize'], window)
+            self.assertEqual(cfg['env'][provider['envKey']], 'dummy')
+            self.assertEqual(cfg['security']['auth']['selectedType'], 'openai')
+            self.assertEqual(cfg['model']['name'], 'petit-qwen')
+
     def test_reject_unknown_options(self):
         source = Path('configs/sglang.toml').read_text() + '\nquantization = "fp8"\n'
         with tempfile.NamedTemporaryFile(mode='w', suffix='.toml') as f:
